@@ -1,0 +1,50 @@
+17:44:57 START 02_done.ipynb
+17:45:04 DONE 02_done.ipynb in 0.1 min
+17:45:04 START 03_done.ipynb
+17:45:17 DONE 03_done.ipynb in 0.2 min
+17:45:17 START 04_pair_done.ipynb
+17:54:52 ERROR in 04_pair_done.ipynb: _check_call[39m[34m(ret)[39m
+[32m    188[39m [38;5;250m[39m[33;03m"""Check the return value of C API call."""[39;00m
+[32m    189[39m [38;5;28;01mif[39;00m ret != [32m0[39m:
+[32m--> [39m[32m190[39m     [38;5;28;01mraise[39;00m XGBoostError(py_str(_LIB.XGBGetLastError()))
+
+[31mXGBoostError[39m: [17:54:38] C:\actions-runner\_work\xgboost\xgboost\src\common\device_vector.cu:53: Memory allocation error on worker 0: bad allocation: cudaErrorMemoryAllocation: out of memory
+- Free memory: 4.92578GB
+- Requested memory: 548.705MB
+- Reserved by the pool: 0B
+- Used by the pool: 0B
+
+
+17:54:52 FAILED 04_pair_done.ipynb in 9.6 min
+17:54:52 Stopping: fix the error above, then run again with the failed step name.
+17:54:52 ALL DONE
+21:23:23 START 04_pair_done.ipynb
+21:25:06 ERROR in 04_pair_done.ipynb: rams\Python\Python312\Lib\site-packages\joblib\parallel.py:795[39m, in [36mBatchCompletionCallBack._return_or_raise[39m[34m(self)[39m
+[32m    793[39m [38;5;28;01mtry[39;00m:
+[32m    794[39m     [38;5;28;01mif[39;00m [38;5;28mself[39m.status == TASK_ERROR:
+[32m--> [39m[32m795[39m         [38;5;28;01mraise[39;00m [38;5;28mself[39m._result
+[32m    796[39m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m._result
+[32m    797[39m [38;5;28;01mfinally[39;00m:
+
+[31mMemoryError[39m: Unable to allocate 547. MiB for an array with shape (30000, 2390) and data type float64
+
+21:25:06 FAILED 04_pair_done.ipynb in 1.7 min
+21:25:06 Stopping: fix the error above, then run again with the failed step name.
+21:25:06 ALL DONE
+21:28:25 START 04_pair_done.ipynb
+21:37:22 DONE 04_pair_done.ipynb in 9.0 min
+21:37:23 START 04_unseen_drug_done.ipynb
+21:45:17 ERROR in 04_unseen_drug_done.ipynb: 2m--> [39m[32m795[39m         [38;5;28;01mraise[39;00m [38;5;28mself[39m._result
+[32m    796[39m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m._result
+[32m    797[39m [38;5;28;01mfinally[39;00m:
+
+[31mTerminatedWorkerError[39m: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+
+Detailed tracebacks of the workers should have been printed to stderr in the executor process if faulthandler was not disabled.
+
+21:45:17 FAILED 04_unseen_drug_done.ipynb in 7.9 min
+21:45:17 Stopping: fix the error above, then run again with the failed step name.
+21:45:17 ALL DONE
+21:49:18 START 04_unseen_drug_done.ipynb
+21:57:35 DONE 04_unseen_drug_done.ipynb in 8.3 min
+21:57:35 ALL DONE

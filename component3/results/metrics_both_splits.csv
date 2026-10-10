@@ -1,0 +1,11 @@
+split,model,test_micro_AUPRC,test_P@3,test_P@10,test_micro_F1,test_recall_High_effects
+pair,prevalence,0.31,0.385,0.346,0.402,0.268
+pair,drug_history,0.607,0.618,0.501,0.593,0.401
+pair,random_forest,0.755,0.62,0.511,0.675,0.627
+pair,xgboost,0.768,0.617,0.511,0.682,0.675
+pair,svm,0.737,0.607,0.5,0.665,0.645
+unseen_drug,prevalence,0.314,0.366,0.354,0.413,0.261
+unseen_drug,drug_history,0.449,0.514,0.436,0.494,0.333
+unseen_drug,random_forest,0.427,0.488,0.425,0.483,0.438
+unseen_drug,xgboost,0.39,0.425,0.38,0.467,0.509
+unseen_drug,svm,0.338,0.402,0.346,0.432,0.607
