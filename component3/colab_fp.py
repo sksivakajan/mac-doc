@@ -29,11 +29,18 @@ def _wait(gap=0.25):                      # all threads together: at most 4 requ
             time.sleep(d)
         _last[0] = time.time()
 
-def fetch_json(url, retries=5, pause=3.0):
+_deadline = [None]                         # time after which we stop asking PubChem
+
+def _expired():
+    return _deadline[0] is not None and time.time() > _deadline[0]
+
+def fetch_json(url, retries=3, pause=2.0):
     for attempt in range(retries):
+        if _expired():
+            raise Transient("time budget used")
         _wait()
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=40) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:
                 return json.loads(r.read().decode("utf-8", "replace"))
         except urllib.error.HTTPError as e:
             if e.code in (400, 404):
@@ -90,26 +97,41 @@ def save_cache(res, path):
     pd.DataFrame([(i, s, st) for i, (s, st) in sorted(res.items())],
                  columns=["drug_id", "smiles", "status"]).to_csv(path, index=False)
 
-def run_pubchem(drugs, passes=3, workers=4, cache=None):
-    res = dict(cache or {})
+def run_pubchem(drugs, passes=2, workers=4, cache=None, cache_file=None, max_seconds=420):
+    """Ask PubChem for every drug that is not known yet.
+    Never runs longer than max_seconds in total. Answers are saved to cache_file while we go,
+    so pressing Stop (or a crash) loses nothing. Drugs without an answer stay 'unknown'
+    (they get no fingerprint now; run the cell again later and only they are asked again)."""
     ids_now = set(drugs["drug_id"].astype("int64"))
-    res = {i: v for i, v in res.items() if i in ids_now}
+    res = {i: v for i, v in dict(cache or {}).items() if i in ids_now}
     print(f"already known from cache: {len(res)} of {len(ids_now)}", flush=True)
     todo = list(zip(drugs["drug_id"].astype("int64"), drugs["drug_name"]))
-    for p in range(passes):
-        todo = [t for t in todo if t[0] not in res]
-        if not todo:
-            break
-        print(f"pass {p+1}: asking PubChem for {len(todo)} drugs ...", flush=True)
-        t0 = time.time()
-        with ThreadPoolExecutor(workers) as ex:
-            for k, (i, s, st) in enumerate(ex.map(lookup, todo), 1):
-                if st != "unknown":
-                    res[i] = (s, st)
-                if k % 100 == 0:
-                    print(f"   {k}/{len(todo)}  ({time.time()-t0:.0f}s)", flush=True)
-        if p < passes - 1 and any(t[0] not in res for t in todo):
-            time.sleep(20)
+    _deadline[0] = time.time() + max_seconds
+    t0 = time.time()
+    try:
+        for p in range(passes):
+            todo = [t for t in todo if t[0] not in res]
+            if not todo or _expired():
+                break
+            print(f"pass {p+1}: asking PubChem for {len(todo)} drugs (max {max_seconds}s in total) ...", flush=True)
+            with ThreadPoolExecutor(workers) as ex:
+                for k, (i, s, st) in enumerate(ex.map(lookup, todo), 1):
+                    if st != "unknown":
+                        res[i] = (s, st)
+                    if k % 50 == 0:
+                        print(f"   {k}/{len(todo)}  ({time.time()-t0:.0f}s)", flush=True)
+                        if cache_file:
+                            save_cache(res, cache_file)
+            if p < passes - 1 and not _expired() and any(t[0] not in res for t in todo):
+                time.sleep(10)
+    finally:
+        _deadline[0] = None
+        if cache_file:
+            save_cache(res, cache_file)
+    left = len(ids_now) - len(res)
+    if left:
+        print(f"NOTE: {left} drugs got no answer from PubChem (busy or time budget). "
+              "Training works without them. Run this cell again later to try only those.", flush=True)
     return res
 
 def morgan(smi):
@@ -124,9 +146,7 @@ def morgan(smi):
     return a
 
 def build(drugs, out="drug_fp_colab.npz", cache_file=None):
-    res = run_pubchem(drugs, cache=load_cache(cache_file))
-    if cache_file:
-        save_cache(res, cache_file)
+    res = run_pubchem(drugs, cache=load_cache(cache_file), cache_file=cache_file)
     ids = drugs["drug_id"].astype("int64").to_numpy()
     smi = np.array([res.get(i, ("", "unknown"))[0] for i in ids])
     st = np.array([res.get(i, ("", "unknown"))[1] for i in ids])
