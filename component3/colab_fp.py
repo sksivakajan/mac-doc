@@ -75,8 +75,26 @@ def lookup(item):
     except Transient:
         return i, "", "unknown"
 
-def run_pubchem(drugs, passes=3, workers=4):
+def load_cache(path):
+    """Read an old answer table (drug_id, smiles, status). Only final answers are reused."""
+    import os
     res = {}
+    if path and os.path.exists(path):
+        c = pd.read_csv(path, keep_default_na=False)
+        for i, s, st in zip(c["drug_id"].astype("int64"), c["smiles"], c["status"]):
+            if st in ("ok", "not_found"):
+                res[int(i)] = (str(s), st)
+    return res
+
+def save_cache(res, path):
+    pd.DataFrame([(i, s, st) for i, (s, st) in sorted(res.items())],
+                 columns=["drug_id", "smiles", "status"]).to_csv(path, index=False)
+
+def run_pubchem(drugs, passes=3, workers=4, cache=None):
+    res = dict(cache or {})
+    ids_now = set(drugs["drug_id"].astype("int64"))
+    res = {i: v for i, v in res.items() if i in ids_now}
+    print(f"already known from cache: {len(res)} of {len(ids_now)}", flush=True)
     todo = list(zip(drugs["drug_id"].astype("int64"), drugs["drug_name"]))
     for p in range(passes):
         todo = [t for t in todo if t[0] not in res]
@@ -88,7 +106,7 @@ def run_pubchem(drugs, passes=3, workers=4):
             for k, (i, s, st) in enumerate(ex.map(lookup, todo), 1):
                 if st != "unknown":
                     res[i] = (s, st)
-                if k % 200 == 0:
+                if k % 100 == 0:
                     print(f"   {k}/{len(todo)}  ({time.time()-t0:.0f}s)", flush=True)
         if p < passes - 1 and any(t[0] not in res for t in todo):
             time.sleep(20)
@@ -105,8 +123,10 @@ def morgan(smi):
     DataStructs.ConvertToNumpyArray(gen.GetFingerprint(m), a)
     return a
 
-def build(drugs, out="drug_fp_colab.npz"):
-    res = run_pubchem(drugs)
+def build(drugs, out="drug_fp_colab.npz", cache_file=None):
+    res = run_pubchem(drugs, cache=load_cache(cache_file))
+    if cache_file:
+        save_cache(res, cache_file)
     ids = drugs["drug_id"].astype("int64").to_numpy()
     smi = np.array([res.get(i, ("", "unknown"))[0] for i in ids])
     st = np.array([res.get(i, ("", "unknown"))[1] for i in ids])
@@ -136,5 +156,5 @@ def build_from_work(work_dir="work"):
         print("already exists:", out)
         return out
     drugs = pd.read_csv(work / "drugs_raw.csv")
-    build(drugs, str(out))
+    build(drugs, str(out), cache_file=str(work / "smiles_cache.csv"))
     return out
