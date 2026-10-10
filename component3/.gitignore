@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# big or re-creatable files stay out of GitHub
+work/signals.npz
+work/signals_meta.json
+work/offsides_top_effects.csv
+work/modeling_*
+work/drug_features.npz
+work/split_*.npz
+results/*.joblib
+*.joblib

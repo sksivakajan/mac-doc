@@ -1,0 +1,71 @@
+effect_id,effect_name,n_pairs,severity
+10002034,Anaemia,71425,Medium
+10035664,Pneumonia,66804,Medium
+10012735,Diarrhoea,64843,Low
+10028813,Nausea,58034,Low
+10038436,Renal failure acute,57723,High
+10003549,Asthenia,57718,Low
+10013968,Dyspnoea,57263,Medium
+10033371,Pain,56880,Low
+10016173,Fall,54589,Unknown
+10037660,Pyrexia,53987,Unknown
+10020772,Hypertension,53575,Medium
+10002855,Anxiety,53533,Medium
+10030124,Oedema peripheral,52111,Medium
+10047700,Vomiting,51988,Low
+10021097,Hypotension,51984,Medium
+10016256,Fatigue,50450,Low
+10008479,Chest pain,49311,Medium
+10003988,Back pain,48778,Low
+10012174,Dehydration,48590,Medium
+10013573,Dizziness,48097,Medium
+10038435,Renal failure,47852,High
+10000081,Abdominal pain,47697,Low
+10012378,Depression,45482,Medium
+10046571,Urinary tract infection,45100,Medium
+10010774,Constipation,44676,Low
+10033425,Pain in extremity,42751,Low
+10040047,Sepsis,42043,High
+10047895,Weight decreased,41784,Unknown
+10010305,Confusional state,41670,Medium
+10003239,Arthralgia,40490,Unknown
+10003658,Atrial fibrillation,38981,High
+10022116,Injury,38846,Unknown
+10061428,Decreased appetite,38197,Low
+10019211,Headache,38180,Low
+10013710,Drug interaction,38161,Unknown
+10011224,Cough,37907,Low
+10035598,Pleural effusion,37412,Unknown
+10018884,Haemoglobin decreased,36200,Unknown
+10038695,Respiratory failure,35959,High
+10007559,Cardiac failure congestive,35812,High
+10043554,Thrombocytopenia,34841,High
+10049438,General physical health deterioration,33809,Unknown
+10022437,Insomnia,33761,Low
+10012601,Diabetes mellitus,32292,Unknown
+10017885,Gastrooesophageal reflux disease,32214,Unknown
+10051055,Deep vein thrombosis,32031,High
+10006451,Bronchitis,31896,Unknown
+10021015,Hypokalaemia,31680,Medium
+10020937,Hypoaesthesia,31465,Unknown
+10042772,Syncope,31434,Medium
+10017955,Gastrointestinal haemorrhage,28510,High
+10037377,Pulmonary embolism,27923,High
+10010904,Convulsion,22696,High
+10007554,Cardiac failure,22098,High
+10007515,Cardiac arrest,20959,High
+10038444,Renal failure chronic,20673,High
+10020646,Hyperkalaemia,20250,High
+10028154,Multi-organ failure,19483,High
+10020993,Hypoglycaemia,19340,High
+10028596,Myocardial infarction,18088,High
+10038063,Rectal haemorrhage,17959,High
+10064658,Osteonecrosis of jaw,16227,High
+10000891,Acute myocardial infarction,15220,High
+10007617,Cardio-respiratory arrest,14248,High
+10039020,Rhabdomyolysis,13909,High
+10042458,Suicidal ideation,12395,High
+10033295,Overdose,12019,High
+10055798,Haemorrhage,11970,High
+10010071,Coma,11609,High
+10043607,Thrombosis,11593,High
